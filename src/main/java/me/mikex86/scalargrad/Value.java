@@ -5,6 +5,8 @@ import me.mikex86.scalargrad.graph.GraphRecorder;
 import me.mikex86.scalargrad.op.impl.MultiplyOp;
 import me.mikex86.scalargrad.op.impl.PowerOp;
 
+import java.util.List;
+
 public class Value {
 
     private final double v;
@@ -30,15 +32,15 @@ public class Value {
     }
 
     public Value multiply(Value b) {
-        return graphRecorder.recordOperation(new MultiplyOp(), this, b);
+        return graphRecorder.recordOperation(new MultiplyOp(), List.of(this, b));
     }
 
     public Value pow(Value value) {
-        return graphRecorder.recordOperation(new PowerOp(), this, value);
+        return graphRecorder.recordOperation(new PowerOp(), List.of(this, value));
     }
 
     public void backward() {
-        Graph graph = graphRecorder.endRecording();
+        Graph graph = graphRecorder.endRecording(this);
         graph.backward();
     }
 
