@@ -5,6 +5,12 @@ import me.mikex86.scalargrad.op.BinaryOperation;
 
 public class PowerOp implements BinaryOperation {
 
+    private static final PowerOp INSTANCE = new PowerOp();
+
+    public static PowerOp getInstance() {
+        return INSTANCE;
+    }
+
     @Override
     public Value perform(Value a, Value b) {
         return new Value(Math.pow(a.getValue(), b.getValue()));

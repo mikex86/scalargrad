@@ -1,7 +1,6 @@
 package me.mikex86.scalargrad.graph;
 
 import me.mikex86.scalargrad.Value;
-import me.mikex86.scalargrad.op.BinaryOperation;
 import me.mikex86.scalargrad.op.Operation;
 
 import java.util.*;
