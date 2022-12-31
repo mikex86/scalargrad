@@ -12,5 +12,3 @@ It is thus in my opinion the ideal depth of abstraction for a beginner learning 
 as `Value`s in micrograd are also nodes in the graph and also the graph itself, which can be confusing to a beginner.
 
 This clear separation of concerns aims to improve clarity and readability of the code.
-Another difference between micrograd and scalargrad is that scalargrad backpropagates in a recursive manner,
-while micrograd topologically sorts a list of values (which are graph nodes) to visit, which I believe subtly obscures the underlying concept.

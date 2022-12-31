@@ -3,8 +3,7 @@ package me.mikex86.scalargrad.graph;
 import me.mikex86.scalargrad.Value;
 import me.mikex86.scalargrad.op.Operation;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Graph {
 
@@ -25,18 +24,37 @@ public class Graph {
     }
 
     private void backward(Node node) {
-        if (node instanceof OperationNode operationNode) {
-            Operation operation = operationNode.getOperation();
-            List<Value> inputValues = new ArrayList<>();
-            for (Node inputNode : operationNode.getInputNodes()) {
-                inputValues.add(inputNode.getValue());
+        Deque<Node> topology = new LinkedList<>();
+        Set<Node> visited = new HashSet<>();
+        // build topology
+        {
+            buildTopo(node, topology, visited);
+        }
+        // backward
+        for (Node n : topology) {
+            if (n instanceof OperationNode opNode) {
+                Value v = opNode.getValue();
+                Operation op = opNode.getOperation();
+                List<Value> inputs = opNode.getInputNodes()
+                        .stream()
+                        .map(Node::getValue)
+                        .toList();
+                op.backward(v, inputs);
             }
-            Value operationOutput = operationNode.getValue();
-            operation.backward(operationOutput, inputValues);
+        }
+    }
 
-            for (Node inputNode : operationNode.getInputNodes()) {
-                backward(inputNode);
+    private void buildTopo(Node node, Deque<Node> topology, Set<Node> visited) {
+        if (visited.contains(node)) {
+            return;
+        }
+        visited.add(node);
+        // This ordering guarantees that we don't use premature upstream gradients to compute subsequent gradients
+        if (node instanceof OperationNode operationNode) {
+            for (Node input : operationNode.getInputNodes()) {
+                buildTopo(input, topology, visited);
             }
+            topology.addFirst(node); // add node AFTER all its inputs have been added
         }
     }
 
